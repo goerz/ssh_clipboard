@@ -38,7 +38,7 @@ def write_default_config(configfile):
         """.format(
         buffer = os.path.join(os.environ['HOME'], '.ssh_clipboard.buffer'),
         user = os.environ['USER'], 
-        private_key = os.path.expanduser('~/.ssh/id_rsa')
+        private_key = '~/.ssh/id_rsa'
         )))
 
 
@@ -82,7 +82,7 @@ def get_params(configfile):
             user = ssh_config['user']
 
     if config.has_option('DEFAULT', 'private_key'):
-        private_key = config.get('DEFAULT', 'private_key')
+        private_key = os.path.expanduser(config.get('DEFAULT', 'private_key'))
     else:
         private_key = os.path.expanduser('~/.ssh/id_rsa')
         if ssh_config.has_key('identityfile'):
