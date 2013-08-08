@@ -205,7 +205,7 @@ def write_to_server(server, user, private_key, buffer_file, data):
         return 1
     sftp = paramiko.SFTPClient.from_transport(transport)
     try:
-        fh = sftp.open(buffer_file, 'w')
+        fh = sftp.open(buffer_file, 'wb')
         fh.write(data)
         fh.close()
     except IOError, error:
@@ -220,7 +220,7 @@ def write_to_localhost(buffer_file, data):
     """ Store data in the given buffer_file
     """
     try:
-        fh = open(buffer_file, 'w')
+        fh = open(buffer_file, 'wb')
         fh.write(data)
         fh.close()
     except IOError, error:
@@ -239,7 +239,7 @@ def read_from_server(server, user, private_key, buffer_file):
         return 1
     sftp = paramiko.SFTPClient.from_transport(transport)
     try:
-        fh = sftp.open(buffer_file)
+        fh = sftp.open(buffer_file, 'rb')
         data = fh.read()
         transport.close()
         return data
@@ -253,7 +253,7 @@ def read_from_localhost(buffer_file):
     """ Read data from the given buffer_file
     """
     try:
-        fh = open(buffer_file)
+        fh = open(buffer_file, 'rb')
         data = fh.read()
         fh.close()
         return data
