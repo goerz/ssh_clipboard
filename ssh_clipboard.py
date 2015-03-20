@@ -37,7 +37,7 @@ def write_default_config(configfile):
 
         """.format(
         buffer = os.path.join(os.environ['HOME'], '.ssh_clipboard.buffer'),
-        user = os.environ['USER'], 
+        user = os.environ['USER'],
         private_key = '~/.ssh/id_rsa'
         )))
 
@@ -71,21 +71,21 @@ def get_params(configfile):
         ssh_config = {}
     else:
         ssh_config = SSHConfigParser.lookup(server)
-    if ssh_config.has_key('hostname'):
+    if 'hostname' in ssh_config:
         server = ssh_config['hostname']
-    
+
     if config.has_option('DEFAULT', 'user'):
         user = config.get('DEFAULT', 'user')
     else:
         user = os.environ['USER']
-        if ssh_config.has_key('user'):
+        if 'user'in ssh_config:
             user = ssh_config['user']
 
     if config.has_option('DEFAULT', 'private_key'):
         private_key = os.path.expanduser(config.get('DEFAULT', 'private_key'))
     else:
         private_key = os.path.expanduser('~/.ssh/id_rsa')
-        if ssh_config.has_key('identityfile'):
+        if 'identityfile' in ssh_config:
             private_key = ssh_config['identityfile']
 
     if config.has_option('DEFAULT', 'buffer'):
@@ -112,7 +112,7 @@ def agent_auth(transport, username):
     if len(agent_keys) == 0:
         logging.debug('No keys in agent')
         return
-        
+
     for key in agent_keys:
         logging.debug('Trying ssh-agent key %s',
                       hexlify(key.get_fingerprint()))
@@ -131,7 +131,7 @@ def key_auth(transport, username, private_key):
         password.  Success of the authentication can be checked with
         transport.is_authenticated(); failure will be silent
     """
-    logging.debug("Trying to authenticate using private key") 
+    logging.debug("Trying to authenticate using private key")
     try:
         key = paramiko.RSAKey.from_private_key_file(private_key)
     except paramiko.PasswordRequiredException:
@@ -173,11 +173,11 @@ def get_authenticated_transport(server, user, private_key, port=22):
             logging.debug('Unable to open ~/.ssh/known_hosts')
             keys = {}
         key = transport.get_remote_server_key()
-        if not keys.has_key(server):
+        if not server in keys:
             ssh_error_msg('Server %s not in known hosts!!!', server)
             print >> os.sys.stderr, '*** ERROR: server not in known hosts!'
             return None
-        elif not keys[server].has_key(key.get_name()):
+        elif not key.get_name() in keys[server]:
             ssh_error_msg('Unknown host key for %s!!!', server)
             return None
         elif keys[server][key.get_name()] != key:
